@@ -17,9 +17,10 @@ rcvar="gogs_enable"
 
 load_rc_config $name
 
-: ${gogs_user:="git"}
 : ${gogs_enable:="NO"}
-: ${gogs_directory:="/home/git"}
+: ${gogs_user:="git"}
+: ${gogs_home:=`/usr/sbin/pw user show ${gogs_user} | /usr/bin/cut -d: -f 9`}
+: ${gogs_directory:="${gogs_home}/gogs"}
 
 command="${gogs_directory}/gogs web"
 procname="$(echo $command |cut -d' ' -f1)"
@@ -32,7 +33,7 @@ stop_cmd="${name}_stop"
 gogs_start() {
 	cd ${gogs_directory}
 	export USER=${gogs_user}
-	export HOME=/usr/home/${gogs_user}
+	export HOME=${gogs_home}
 	/usr/sbin/daemon -f -u ${gogs_user} -p ${pidfile} $command
 }
 
